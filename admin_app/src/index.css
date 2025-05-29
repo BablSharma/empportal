@@ -1,0 +1,205 @@
+/* General styles */
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-color: #f7f9fc;
+  color: #333;
+}
+
+/* Navbar */
+.nav {
+  display: flex;
+  gap: 15px;
+  background-color: #007bff;
+  padding: 10px 20px;
+  align-items: center;
+}
+
+.nav a {
+  color: white;
+  text-decoration: none;
+  font-weight: 600;
+  transition: opacity 0.3s ease;
+}
+
+.nav a:hover {
+  opacity: 0.85;
+}
+
+.nav button {
+  margin-left: auto;
+  background: white;
+  border: none;
+  color: #007bff;
+  font-weight: bold;
+  cursor: pointer;
+  padding: 5px 15px;
+  border-radius: 4px;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+.nav button:hover {
+  background: #007bff;
+  color: white;
+}
+
+/* Container for pages */
+.page-container {
+  max-width: 800px;
+  margin: 30px auto;
+  padding: 20px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Form styles */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.form input,
+.form select {
+  padding: 10px;
+  font-size: 1rem;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  transition: border-color 0.3s ease;
+}
+
+.form input:focus,
+.form select:focus {
+  outline: none;
+  border-color: #007bff;
+}
+
+.form button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 12px;
+  font-weight: bold;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.form button:hover {
+  background-color: #0056b3;
+}
+
+/* Table styles */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px;
+}
+
+.table th,
+.table td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: left;
+}
+
+.table th {
+  background-color: #007bff;
+  color: white;
+}
+
+/* Filters */
+.filters {
+  margin-bottom: 15px;
+  display: flex;
+  gap: 10px;
+}
+
+/* Login container */
+.login-container {
+  max-width: 400px;
+  margin: 80px auto;
+  padding: 20px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.login-container h2 {
+  margin-bottom: 20px;
+}
+
+/* Role toggle buttons */
+.role-toggle {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 15px;
+}
+
+.role-toggle button {
+  flex: 1;
+  padding: 10px;
+  margin: 0 5px;
+  background: #ddd;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.3s ease;
+}
+
+.role-toggle button.active {
+  background: #007bff;
+  color: white;
+}
+
+.role-toggle button:hover {
+  background: #007bff;
+  color: white;
+}
+
+/* Login form inputs and button */
+.form input {
+  width: 100%;
+  margin-bottom: 12px;
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.form button {
+  width: 100%;
+  padding: 12px;
+  background: #007bff;
+  color: white;
+  border: none;
+  border-radius: 40px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.form button:hover {
+  background: #0056b3;
+}
+
+/* Link button styles */
+.link-btn {
+  background: none;
+  border: none;
+  color: #007bff;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.link-btn:hover {
+  text-decoration: none;
+}
+
+/* Error messages */
+.error {
+  color: red;
+  margin-top: 10px;
+}
