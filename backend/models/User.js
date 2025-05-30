@@ -1,4 +1,3 @@
-// models/User.js
 class User {
   constructor(username, email, password, role) {
     this.id = Date.now().toString();  // simple unique id
@@ -9,4 +8,4 @@ class User {
   }
 }
 
-module.exports = User;
+export default User;

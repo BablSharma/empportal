@@ -5,57 +5,99 @@ export default function ContactUs() {
         * {
           box-sizing: border-box;
         }
+
         body, html, #root {
-          margin: 0; padding: 0; height: 100%;
+          margin: 0;
+          padding: 0;
+          height: 100%;
           font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
           background: linear-gradient(135deg, #e0eafc, #cfdef3);
           color: #2c3e50;
         }
-        .page-container {
-          max-width: 600px;
+
+        .contact-wrapper {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          min-height: 100vh;
+          padding: 2rem;
+        }
+
+        .contact-box {
+          max-width: 800px;
+          width: 100%;
           background: white;
-          margin: 4rem auto;
-          padding: 2.5rem 2rem;
-          border-radius: 12px;
-          box-shadow: 0 10px 30px rgba(44, 62, 80, 0.1);
+          padding: 3rem 2.5rem;
+          border-radius: 16px;
+          box-shadow: 0 12px 30px rgba(44, 62, 80, 0.2);
           text-align: center;
-          animation: fadeInUp 0.8s ease forwards;
-          border: 1px solid #dcdcdc;
+          animation: fadeIn 1s ease;
+          border: 1px solid #e0e0e0;
+          background: linear-gradient(145deg, #ffffff, #f7f9fc);
         }
-        h2 {
+
+        .contact-box h2 {
           font-size: 2.5rem;
+          color: #2c3e50;
           margin-bottom: 1.5rem;
-          color: #34495e;
-          font-weight: 700;
         }
-        p {
-          font-size: 1.125rem;
-          margin: 0.8rem 0;
-          color: #566573;
-          line-height: 1.6;
-          user-select: text;
+
+        .contact-detail {
+          font-size: 1.15rem;
+          color: #4d4d4d;
+          margin: 1rem 0;
+          line-height: 1.7;
         }
-        a {
+
+        .contact-detail strong {
+          color: #007bff;
+        }
+
+        .contact-detail a {
           color: #2980b9;
           text-decoration: none;
-          transition: color 0.3s, text-decoration 0.3s;
+          transition: color 0.3s;
         }
-        a:hover {
+
+        .contact-detail a:hover {
           text-decoration: underline;
           color: #1a5276;
         }
-        @keyframes fadeInUp {
-          from { opacity: 0; transform: translateY(20px); }
-          to { opacity: 1; transform: translateY(0); }
+
+        .icon {
+          display: inline-block;
+          margin-right: 8px;
+          color: #007bff;
+        }
+
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
         }
       `}</style>
 
-      <div className="page-container">
-        <h2>Contact Us</h2>
-        <p><strong>Company:</strong> Opalina technologies</p>
-        <p><strong>Email:</strong> <a href="bablu.sharma@opalina.in">bablu.sharma@opalina.in</a></p>
-        <p><strong>Phone:</strong>(+91) 8684926531</p>
-        <p><strong>Address:</strong> Pride tech park , sector 136 , Noida, India</p>
+      <div className="contact-wrapper">
+        <div className="contact-box">
+          <h2>Contact Us</h2>
+          <p className="contact-detail">
+            <span className="icon">🏢</span><strong>Company:</strong> Opalina Technologies
+          </p>
+          <p className="contact-detail">
+            <span className="icon">📧</span><strong>Email:</strong> <a href="mailto:bablu.sharma@opalina.in">bablu.sharma@opalina.in</a>
+          </p>
+          <p className="contact-detail">
+            <span className="icon">📞</span><strong>Phone:</strong> (+91) 8684926531
+          </p>
+          <p className="contact-detail">
+            <span className="icon">📍</span><strong>Address:</strong> Pride Tech Park, Sector 136, Noida, India
+          </p>
+        </div>
       </div>
     </>
   );

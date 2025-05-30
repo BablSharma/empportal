@@ -3,7 +3,6 @@ import React, { useEffect, useState } from "react";
 export default function LeaveSummary() {
   const [summary, setSummary] = useState(null);
   const [error, setError] = useState("");
-
   const totalAvailableLeaves = 20;
 
   useEffect(() => {
@@ -25,46 +24,111 @@ export default function LeaveSummary() {
     };
 
     fetchSummary();
-  }, []); // no dependency since user_id comes from localStorage
+  }, []);
 
   return (
     <div style={styles.container}>
-      <h2 style={styles.heading}>My Leave Summary</h2>
-      {error && <p style={styles.error}>{error}</p>}
-      {summary && (
-        <div style={styles.summaryBox}>
-          <p>Total Leaves Available: <strong>{totalAvailableLeaves}</strong></p>
-          <p>Total Leaves Applied: <strong>{summary.totalLeaves}</strong></p>
-          <p>Approved Leaves: <strong>{summary.approvedLeaves}</strong></p>
-          <p>Pending Leaves: <strong>{summary.pendingLeaves}</strong></p>
-          <p>Rejected Leaves: <strong>{summary.rejectedLeaves}</strong></p>
-          <p>Remaining Leaves: <strong>{totalAvailableLeaves - summary.approvedLeaves}</strong></p>
+      <div style={styles.card}>
+        <div style={styles.header}>
+          <h2 style={styles.title}>Leave Summary</h2>
         </div>
-      )}
+
+        {error && <p style={styles.error}>{error}</p>}
+
+        {summary && (
+          <div style={styles.grid}>
+            <div style={styles.item}>
+              <span style={styles.label}>Total Available:</span>
+              <span style={styles.value}>{totalAvailableLeaves}</span>
+            </div>
+            <div style={styles.item}>
+              <span style={styles.label}>Applied:</span>
+              <span style={styles.value}>{summary.totalLeaves}</span>
+            </div>
+            <div style={styles.item}>
+              <span style={styles.label}>Approved:</span>
+              <span style={styles.value}>{summary.approvedLeaves}</span>
+            </div>
+            <div style={styles.item}>
+              <span style={styles.label}>Pending:</span>
+              <span style={styles.value}>{summary.pendingLeaves}</span>
+            </div>
+            <div style={styles.item}>
+              <span style={styles.label}>Rejected:</span>
+              <span style={styles.value}>{summary.rejectedLeaves}</span>
+            </div>
+            <div style={styles.item}>
+              <span style={styles.label}>Remaining:</span>
+              <span style={styles.value}>
+                {totalAvailableLeaves - summary.approvedLeaves}
+              </span>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
-
 const styles = {
   container: {
-    maxWidth: 500,
-    margin: "40px auto",
-    padding: 20,
-    background: "white",
-    borderRadius: 8,
-    boxShadow: "0 2px 6px rgba(0,0,0,0.1)",
+    display: "flex",
+    justifyContent: "center",
+    padding: 50,
+    fontFamily: "'Segoe UI', sans-serif",
+    backgroundColor: "#f0f4f8",
+    minHeight: "100vh",
   },
-  heading: {
+  card: {
+    width: "100%",
+    maxWidth: 800,
+    background: "#fff",
+    borderRadius: 16,
+    boxShadow: "0 8px 24px rgba(0,0,0,0.1)",
+    overflow: "hidden",
+  },
+  header: {
+    background: "linear-gradient(to right, #007bff, #00c6ff)",
+    padding: "30px 40px",
+    color: "white",
     textAlign: "center",
-    marginBottom: 20,
-    color: "#007bff",
   },
-  summaryBox: {
-    lineHeight: 1.6,
-    fontSize: "1rem",
+  title: {
+    margin: 0,
+    fontSize: "2rem",
+    fontWeight: 600,
+    letterSpacing: 1,
+  },
+  grid: {
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
+    padding: "40px",
+    gap: "30px",
+    backgroundColor: "#f8f9fa",
+  },
+  item: {
+    background: "#ffffff",
+    padding: "20px",
+    borderRadius: 12,
+    boxShadow: "0 2px 10px rgba(0,0,0,0.05)",
+    textAlign: "left",
+    transition: "transform 0.2s ease, box-shadow 0.2s ease",
+  },
+  label: {
+    fontWeight: "600",
+    color: "#555",
+    display: "block",
+    fontSize: "1.05rem",
+    marginBottom: 6,
+  },
+  value: {
+    fontSize: "1.5rem",
+    fontWeight: "bold",
+    color: "#007bff",
   },
   error: {
     color: "red",
+    textAlign: "center",
+    padding: "20px",
     fontWeight: "bold",
   },
 };

@@ -52,5 +52,31 @@ router.get("/inactive", async (req, res) => {
     res.status(500).json({ error: "Server error while fetching inactive employees" });
   }
 });
+// PATCH - update status (active/inactive)
+router.patch("/:id", async (req, res) => {
+  const { id } = req.params;
+  const { status } = req.body;
+
+  if (!status) {
+    return res.status(400).json({ error: "Status field is required" });
+  }
+
+  try {
+    const [result] = await pool.query(
+      "UPDATE employees SET status = ? WHERE id = ?",
+      [status, id]
+    );
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ error: "Employee not found" });
+    }
+
+    res.json({ message: "Employee status updated successfully" });
+  } catch (err) {
+    console.error("Error updating employee status:", err);
+    res.status(500).json({ error: "Server error while updating status" });
+  }
+});
+
 
 module.exports = router;

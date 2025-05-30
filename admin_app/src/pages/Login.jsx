@@ -14,61 +14,80 @@ export default function Login({ setIsLoggedIn, setUserRole }) {
   
     // Save the username to localStorage
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError("");
-    
-    if (isSignup) {
-      try {
-        const res = await fetch("http://localhost:4000/api/auth/signup", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ username, password, email, role: activeRole }),
-        });
-        const data = await res.json();
-      
-        if (res.ok) {
-          alert(data.message || "Signup successful");
-          setUsername("");
-          setPassword("");
-          setEmail("");
-          setIsSignup(false);
-        } else {
-          setError(data.message || "Signup failed");
-        }
-      } catch (err) {
-        setError("Network error during signup");
-      }
-    } else {
-      try {
-        const res = await fetch("http://localhost:4000/api/auth/login", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ username, password, role: activeRole }),
-        });
-        const data = await res.json();
+  e.preventDefault();
+  setError("");
 
-        if (res.ok) {
-          alert("Login successful!");
-          setIsLoggedIn(true);
-          setUserRole(activeRole);
-          localStorage.setItem("user_id", username);
+  if (isSignup) {
+    try {
+      const res = await fetch("http://localhost:4000/api/auth/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          username,
+          password,
+          email,
+          role: activeRole,
+        }),
+      });
+      const data = await res.json();
 
-          if (activeRole === "hr") {
-            navigate("/hr-landing");
-          } else {
-            navigate("/employee-landing");
-          }
-        } else {
-          setError(data.message || "Invalid credentials");
-        }
-      } catch (err) {
-        setError("Network error during login");
+      if (res.ok) {
+        alert(data.message || "Signup successful");
+        setUsername("");
+        setPassword("");
+        setEmail("");
+        setIsSignup(false);
+      } else {
+        setError(data.message || "Signup failed");
       }
+    } catch (err) {
+      setError("Network error during signup");
     }
-  };
-  
+  } else {
+    try {
+      const res = await fetch("http://localhost:4000/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          username,
+          password,
+          role: activeRole,
+        }),
+      });
+      const data = await res.json();
+
+      if (res.ok) {
+        // Check if user’s role matches the active role
+        if (data.role !== activeRole) {
+          setError("You are not allowed to login to this page");
+          return;
+        }
+
+        alert("Login successful!");
+        setIsLoggedIn(true);
+        setUserRole(data.role);
+        localStorage.setItem("user_id", username);
+
+        if (data.role === "hr") {
+          navigate("/hr-landing");
+        } else if (data.role === "employee") {
+          navigate("/employee-landing");
+        } else {
+          setError("Invalid role");
+        }
+      } else {
+        setError(data.message || "Invalid credentials");
+      }
+    } catch (err) {
+      setError("Network error during login");
+    }
+  }
+};
+
   return (
-    <div className="login-container">
+    
+    <div className="login-container"
+    >
       <div className="role-toggle">
         <button
           className={activeRole === "hr" ? "active" : ""}

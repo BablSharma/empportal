@@ -1,16 +1,25 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+
+function generateEmployeeId() {
+  return "EMP" + Math.floor(100000 + Math.random() * 900000);
+}
 
 export default function CreateEmployee() {
   const [id, setId] = useState("");
   const [name, setName] = useState("");
   const [doj, setDoj] = useState("");
   const [status, setStatus] = useState("active");
-  
+
+  // Generate ID on mount or after successful submit
+  useEffect(() => {
+    setId(generateEmployeeId());
+  }, []);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-         
+
     const employeeData = { id, name, doj, status };
-    
+
     try {
       const response = await fetch("http://localhost:4000/api/employees", {
         method: "POST",
@@ -28,10 +37,12 @@ export default function CreateEmployee() {
       console.log("Employee added:", result);
 
       alert("Employee added successfully!");
-      setId("");
+
+      // Clear inputs (except id, regenerate new one)
       setName("");
       setDoj("");
       setStatus("active");
+      setId(generateEmployeeId());
     } catch (err) {
       console.error("Failed to add employee:", err);
       alert("Error adding employee. Please try again.");
@@ -42,13 +53,15 @@ export default function CreateEmployee() {
     <div className="page-container">
       <h2>Create Employee</h2>
       <form onSubmit={handleSubmit} className="form">
+        {/* Show the generated ID but disabled so user can see it but not edit */}
         <input
           type="text"
-          placeholder="Employee ID"
           value={id}
-          onChange={(e) => setId(e.target.value)}
-          required
+          disabled
+          style={{ backgroundColor: "#eee", cursor: "not-allowed" }}
+          aria-label="Employee ID (auto-generated)"
         />
+
         <input
           type="text"
           placeholder="Full Name"
