@@ -6,28 +6,27 @@ export default function LeaveApply() {
   const [reason, setReason] = useState("");
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
-const [leaveList, setLeaveList] = useState([]);
-const [leaveSummary, setLeaveSummary] = useState(null);
-
+  const [leaveList, setLeaveList] = useState([]);
+  const [leaveSummary, setLeaveSummary] = useState(null);
+  const [leaveCategory, setLeaveCategory] = useState("");
 
   const user_id = localStorage.getItem("user_id");
-useEffect(() => {
-  const fetchLeaveSummary = async () => {
-    try {
-      const res = await fetch(`http://localhost:4000/api/leaves/summary/${user_id}`);
-      if (!res.ok) throw new Error("Failed to fetch summary");
-      const data = await res.json();
-      setLeaveSummary(data);
-    } catch (err) {
-      console.error("Summary fetch error:", err.message);
-    }
-  };
+  useEffect(() => {
+    const fetchLeaveSummary = async () => {
+      try {
+        const res = await fetch(
+          `http://localhost:4000/api/leaves/summary/${user_id}`
+        );
+        if (!res.ok) throw new Error("Failed to fetch summary");
+        const data = await res.json();
+        setLeaveSummary(data);
+      } catch (err) {
+        console.error("Summary fetch error:", err.message);
+      }
+    };
 
-  fetchLeaveSummary();
-}, [user_id]);
-
-
-
+    fetchLeaveSummary();
+  }, [user_id]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -46,16 +45,19 @@ useEffect(() => {
       setError("Leave cannot start or end on Saturdays or Sundays.");
       return;
     }
-   
+
     const oneDayMs = 24 * 60 * 60 * 1000;
     const totalDays = Math.floor((end - start) / oneDayMs) + 1;
-    const totalAllowedLeaves = 20;  // Total leave quota
-const remainingLeaves = totalAllowedLeaves - (leaveSummary?.approvedLeaves || 0);
+    const totalAllowedLeaves = 20; // Total leave quota
+    const remainingLeaves =
+      totalAllowedLeaves - (leaveSummary?.approvedLeaves || 0);
 
-if (totalDays > remainingLeaves) {
-  setError(`You only have ${remainingLeaves} leave day(s) remaining. Please reduce the leave duration.`);
-  return;
-}
+    if (totalDays > remainingLeaves) {
+      setError(
+        `You only have ${remainingLeaves} leave day(s) remaining. Please reduce the leave duration.`
+      );
+      return;
+    }
 
     try {
       const res = await fetch("http://localhost:4000/api/leaves", {
@@ -66,6 +68,7 @@ if (totalDays > remainingLeaves) {
           start_date: startDate,
           end_date: endDate,
           reason,
+          category: leaveCategory,
           total_days: totalDays,
         }),
       });
@@ -77,13 +80,18 @@ if (totalDays > remainingLeaves) {
       }
 
       const data = await res.json();
-      setMessage(`Leave applied from ${data.start_date} to ${data.end_date}. Total leave days: ${totalDays}`);
+      setMessage(
+        `Leave applied from ${data.start_date} to ${data.end_date}. Total leave days: ${totalDays}`
+      );
       setStartDate("");
       setEndDate("");
       setReason("");
+     setLeaveCategory("");
 
       // Refresh leave list
-      const updatedRes = await fetch(`http://localhost:4000/api/leaves/summary/${user_id}`);
+      const updatedRes = await fetch(
+        `http://localhost:4000/api/leaves/summary/${user_id}`
+      );
       const updatedList = await updatedRes.json();
       setLeaveList(updatedList);
     } catch (err) {
@@ -94,19 +102,31 @@ if (totalDays > remainingLeaves) {
   return (
     <div style={styles.container}>
       {leaveSummary && (
-  <div style={{ ...styles.summaryBox, marginBottom: 30 }}>
-  <h4 style={{ color: "#007bff", marginBottom: 12 }}>Leave Details</h4>
-  <div style={styles.gridContainer}>
-    <div style={styles.gridItem}><strong>Total Available:</strong> 20</div>
-    <div style={styles.gridItem}><strong>Applied:</strong> {leaveSummary.totalLeaves}</div>
-    <div style={styles.gridItem}><strong>Approved:</strong> {leaveSummary.approvedLeaves}</div>
-    <div style={styles.gridItem}><strong>Pending:</strong> {leaveSummary.pendingLeaves}</div>
-    <div style={styles.gridItem}><strong>Rejected:</strong> {leaveSummary.rejectedLeaves}</div>
-    <div style={styles.gridItem}><strong>Remaining:</strong> {20 - leaveSummary.approvedLeaves}</div>
-  </div>
-</div>
-
-)}
+        <div style={{ ...styles.summaryBox, marginBottom: 30 }}>
+          <h4 style={{ color: "#007bff", marginBottom: 12 }}>Leave Details</h4>
+          <div style={styles.gridContainer}>
+            <div style={styles.gridItem}>
+              <strong>Total Available:</strong> 20
+            </div>
+            <div style={styles.gridItem}>
+              <strong>Applied:</strong> {leaveSummary.totalLeaves}
+            </div>
+            <div style={styles.gridItem}>
+              <strong>Approved:</strong> {leaveSummary.approvedLeaves}
+            </div>
+            <div style={styles.gridItem}>
+              <strong>Pending:</strong> {leaveSummary.pendingLeaves}
+            </div>
+            <div style={styles.gridItem}>
+              <strong>Rejected:</strong> {leaveSummary.rejectedLeaves}
+            </div>
+            <div>
+              <strong>Remaining:</strong>{" "}
+              {20 - (leaveSummary.approvedLeaves || 0)}
+            </div>
+          </div>
+        </div>
+      )}
 
       <h2 style={styles.heading}>Apply for Leave</h2>
       <form onSubmit={handleSubmit} style={styles.form}>
@@ -144,8 +164,26 @@ if (totalDays > remainingLeaves) {
             placeholder="Enter your leave reason here..."
           />
         </div>
+        <div style={styles.field}>
+          <label style={styles.label}>Leave Category:</label>
+          <select
+            value={leaveCategory}
+            onChange={(e) => setLeaveCategory(e.target.value)}
+            required
+            style={styles.input}
+          >
+            <option value="" disabled>
+              Select a category
+            </option>
+            <option value="Sick Leave">Sick Leave</option>
+            <option value="Casual Leave">Casual Leave</option>
+            <option value="Paid Leave">Paid Leave</option>
+          </select>
+        </div>
 
-        <button type="submit" style={styles.button}>Apply</button>
+        <button type="submit" style={styles.button}>
+          Apply
+        </button>
       </form>
 
       {error && <p style={styles.error}>{error}</p>}
@@ -153,43 +191,42 @@ if (totalDays > remainingLeaves) {
 
       <div style={{ marginTop: 40 }}>
         {leaveList.length > 0 && (
-  <table style={{ width: "100%", borderCollapse: "collapse" }}>
-    <thead>
-      <tr>
-        <th style={styles.th}>Start</th>
-        <th style={styles.th}>End</th>
-        <th style={styles.th}>Days</th>
-        <th style={styles.th}>Reason</th>
-      </tr>
-    </thead>
-    <tbody>
-      {leaveList.map((leave, index) => (
-        <tr key={index}>
-          <td style={styles.td}>{leave.start_date}</td>
-          <td style={styles.td}>{leave.end_date}</td>
-          <td style={styles.td}>{leave.total_days}</td>
-          <td style={styles.td}>{leave.reason}</td>
-        </tr>
-      ))}
-    </tbody>
-  </table>
-)}
-
+          <table style={{ width: "100%", borderCollapse: "collapse" }}>
+            <thead>
+              <tr>
+                <th style={styles.th}>Start</th>
+                <th style={styles.th}>End</th>
+                <th style={styles.th}>Days</th>
+                <th style={styles.th}>Reason</th>
+                <th style={styles.th}>Category</th>
+              </tr>
+            </thead>
+            <tbody>
+              {leaveList.map((leave) => (
+                <tr key={leave.id}>
+                  <td style={styles.td}>{leave.start_date}</td>
+                  <td style={styles.td}>{leave.end_date}</td>
+                  <td style={styles.td}>{leave.total_days}</td>
+                  <td style={styles.td}>{leave.reason}</td>
+                  <td style={styles.td}>{leave.category}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
       </div>
-     
-
     </div>
   );
 }
 
 const styles = {
   container: {
-    maxWidth: 700,               // wider container
-    margin: "50px auto",
+    maxWidth: 700,
+    margin: "40px auto",
     padding: 32,
     background: "white",
     borderRadius: 16,
-    boxShadow: "0 12px 30px rgba(0,0,0,0.12)", // stronger shadow
+    boxShadow: "0 12px 30px rgba(0,0,0,0.12)",
     fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
     color: "#2c3e50",
   },

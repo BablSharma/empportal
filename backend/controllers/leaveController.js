@@ -2,28 +2,38 @@ const Leave = require("../models/Leave");
 
 exports.createLeave = async (req, res) => {
   try {
-    const { user_id, start_date, end_date, reason } = req.body;
+    const { user_id, start_date, end_date, reason, category } = req.body;
 
-    if (!user_id || !start_date || !end_date || !reason ) {
+    // Check for required fields
+    if (!user_id || !start_date || !end_date || !reason || !category) {
       return res.status(400).json({ error: "All fields are required." });
     }
 
+    // Validate leave category
+    const allowedCategories = ["Sick Leave", "Casual Leave", "Paid Leave"];
+    if (!allowedCategories.includes(category)) {
+      return res.status(400).json({ error: "Invalid leave category." });
+    }
+
+    // Date logic
     if (new Date(end_date) < new Date(start_date)) {
       return res.status(400).json({ error: "End date cannot be before start date." });
     }
 
-    //  Calculate total days (including sandwich leave logic if any)
+    // Calculate total days
     const start = new Date(start_date);
     const end = new Date(end_date);
     const diffTime = Math.abs(end - start);
-    const total_days = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1; // Including both start and end
+    const total_days = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
 
+    // Create leave entry
     const newLeave = await Leave.create({
       user_id,
       start_date,
       end_date,
       reason,
-      total_days, // Save total leave days
+      category, // Added category here
+      total_days,
       status: "pending",
     });
 
@@ -33,6 +43,7 @@ exports.createLeave = async (req, res) => {
     res.status(500).json({ error: "Server error" });
   }
 };
+
 
 exports.getLeaves = async (req, res) => {
   try {

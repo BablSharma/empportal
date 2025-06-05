@@ -3,7 +3,18 @@ import React, { useEffect, useState } from "react";
 export default function LeaveSummary() {
   const [summary, setSummary] = useState(null);
   const [error, setError] = useState("");
-  const totalAvailableLeaves = 20;
+
+  // Divide the total available leaves into categories
+  const leaveCategories = {
+    sickLeave: 8,
+    casualLeave: 6,
+    paidLeave: 6,
+  };
+   
+  const totalAvailableLeaves =
+    leaveCategories.sickLeave +
+    leaveCategories.casualLeave +
+    leaveCategories.paidLeave;
 
   useEffect(() => {
     const user_id = localStorage.getItem("user_id");
@@ -14,7 +25,9 @@ export default function LeaveSummary() {
 
     const fetchSummary = async () => {
       try {
-        const res = await fetch(`http://localhost:4000/api/leaves/summary/${user_id}`);
+        const res = await fetch(
+          `http://localhost:4000/api/leaves/summary/${user_id}`
+        );
         if (!res.ok) throw new Error("Failed to fetch summary");
         const data = await res.json();
         setSummary(data);
@@ -36,94 +49,98 @@ export default function LeaveSummary() {
         {error && <p style={styles.error}>{error}</p>}
 
         {summary && (
-          <div style={styles.grid}>
-            <div style={styles.item}>
-              <span style={styles.label}>Total Available:</span>
-              <span style={styles.value}>{totalAvailableLeaves}</span>
+          <>
+            <div style={{ ...styles.grid, marginBottom: 20 }}>
+              <div style={styles.item}>
+                <span>Total Available</span>
+                <strong>{totalAvailableLeaves}</strong>
+              </div>
+              <div style={styles.item}>
+                <span>Applied</span>
+                <strong>{summary.totalLeaves}</strong>
+              </div>
+              <div style={styles.item}>
+                <span>Approved</span>
+                <strong>{summary.approvedLeaves}</strong>
+              </div>
+              <div style={styles.item}>
+                <span>Pending</span>
+                <strong>{summary.pendingLeaves}</strong>
+              </div>
+              <div style={styles.item}>
+                <span>Rejected</span>
+                <strong>{summary.rejectedLeaves}</strong>
+              </div>
+              <div style={styles.item}>
+                <span>Remaining</span>
+                <strong>{totalAvailableLeaves - summary.approvedLeaves}</strong>
+              </div>
             </div>
-            <div style={styles.item}>
-              <span style={styles.label}>Applied:</span>
-              <span style={styles.value}>{summary.totalLeaves}</span>
+
+            {/* Display leave categories */}
+            <div style={styles.header}>
+              <h3 style={{ margin: 0, fontSize: "1.2rem" }}>Leave Categories</h3>
             </div>
-            <div style={styles.item}>
-              <span style={styles.label}>Approved:</span>
-              <span style={styles.value}>{summary.approvedLeaves}</span>
+            <div style={styles.grid}>
+              <div style={styles.item}>
+                <span>Sick Leave</span>
+                <strong>{leaveCategories.sickLeave}</strong>
+              </div>
+              <div style={styles.item}>
+                <span>Casual Leave</span>
+                <strong>{leaveCategories.casualLeave}</strong>
+              </div>
+              <div style={styles.item}>
+                <span>Paid Leave</span>
+                <strong>{leaveCategories.paidLeave}</strong>
+              </div>
             </div>
-            <div style={styles.item}>
-              <span style={styles.label}>Pending:</span>
-              <span style={styles.value}>{summary.pendingLeaves}</span>
-            </div>
-            <div style={styles.item}>
-              <span style={styles.label}>Rejected:</span>
-              <span style={styles.value}>{summary.rejectedLeaves}</span>
-            </div>
-            <div style={styles.item}>
-              <span style={styles.label}>Remaining:</span>
-              <span style={styles.value}>
-                {totalAvailableLeaves - summary.approvedLeaves}
-              </span>
-            </div>
-          </div>
+          </>
         )}
       </div>
     </div>
   );
 }
+
 const styles = {
   container: {
     display: "flex",
     justifyContent: "center",
-    padding: 50,
-    fontFamily: "'Segoe UI', sans-serif",
-    backgroundColor: "#f0f4f8",
-    minHeight: "100vh",
+    padding: 30,
+    fontFamily: "Segoe UI, sans-serif",
   },
   card: {
     width: "100%",
-    maxWidth: 800,
+    maxWidth: 500,
     background: "#fff",
-    borderRadius: 16,
-    boxShadow: "0 8px 24px rgba(0,0,0,0.1)",
+    borderRadius: 12,
+    boxShadow: "0 6px 20px rgba(0,0,0,0.1)",
     overflow: "hidden",
   },
   header: {
     background: "linear-gradient(to right, #007bff, #00c6ff)",
-    padding: "30px 40px",
+    padding: "20px 30px",
     color: "white",
     textAlign: "center",
   },
   title: {
     margin: 0,
-    fontSize: "2rem",
-    fontWeight: 600,
-    letterSpacing: 1,
+    fontSize: "1.5rem",
   },
   grid: {
     display: "grid",
-    gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
-    padding: "40px",
-    gap: "30px",
+    gridTemplateColumns: "1fr 1fr",
+    padding: "20px 30px",
+    gap: "20px 30px",
     backgroundColor: "#f8f9fa",
   },
   item: {
-    background: "#ffffff",
-    padding: "20px",
-    borderRadius: 12,
-    boxShadow: "0 2px 10px rgba(0,0,0,0.05)",
-    textAlign: "left",
-    transition: "transform 0.2s ease, box-shadow 0.2s ease",
-  },
-  label: {
-    fontWeight: "600",
-    color: "#555",
-    display: "block",
-    fontSize: "1.05rem",
-    marginBottom: 6,
-  },
-  value: {
-    fontSize: "1.5rem",
-    fontWeight: "bold",
-    color: "#007bff",
+    background: "#fff",
+    padding: "15px",
+    borderRadius: 8,
+    boxShadow: "0 2px 6px rgba(0,0,0,0.05)",
+    textAlign: "center",
+    transition: "transform 0.2s",
   },
   error: {
     color: "red",

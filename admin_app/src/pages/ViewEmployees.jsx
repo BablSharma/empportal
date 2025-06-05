@@ -21,7 +21,7 @@ export default function ViewEmployees() {
         console.error("Error fetching employees:", err);
       });
   };
-    const filtered = employees.filter((emp) => {
+  const filtered = employees.filter((emp) => {
     return (
       emp.name.toLowerCase().includes(filterName.toLowerCase()) &&
       emp.id.toLowerCase().includes(filterId.toLowerCase()) &&
@@ -31,19 +31,21 @@ export default function ViewEmployees() {
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 5; // employees per page
   const totalPages = Math.ceil(filtered.length / pageSize);
-const startIndex = (currentPage - 1) * pageSize;
-const paginatedEmployees = filtered.slice(startIndex, startIndex + pageSize);
-const handlePageChange = (page) => {
-  if (page >= 1 && page <= totalPages) {
-    setCurrentPage(page);
-  }
-};
+  const startIndex = (currentPage - 1) * pageSize;
+  const paginatedEmployees = filtered.slice(startIndex, startIndex + pageSize);
+  const handlePageChange = (page) => {
+    if (page >= 1 && page <= totalPages) {
+      setCurrentPage(page);
+    }
+  };
 
   //  Handle  toggle
   const toggleStatus = async (empId, currentStatus) => {
     const newStatus = currentStatus === "active" ? "inactive" : "active";
     try {
-      await axios.patch(`http://localhost:4000/api/employees/${empId}`, { status: newStatus });
+      await axios.patch(`http://localhost:4000/api/employees/${empId}`, {
+        status: newStatus,
+      });
 
       // Refresh employees after update
       fetchEmployees();
@@ -52,8 +54,6 @@ const handlePageChange = (page) => {
       alert("Failed to update status. Please try again.");
     }
   };
-
-
 
   return (
     <div className="page-container">
@@ -87,61 +87,59 @@ const handlePageChange = (page) => {
             <th>Name</th>
             <th>Date of Joining</th>
             <th>Status</th>
-            <th>Actions</th> 
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody>
           {paginatedEmployees.length === 0 ? (
-  <tr>
-    <td colSpan="5">No employees found</td>
-  </tr>
-) : (
-  paginatedEmployees.map((emp) => (
-    <tr key={emp.id}>
-      <td>{emp.id}</td>
-      <td>{emp.name}</td>
-      <td>{emp.doj}</td>
-      <td>{emp.status}</td>
-      <td>
-        <button
-          onClick={() => toggleStatus(emp.id, emp.status)}
-          style={{
-            backgroundColor: emp.status === "active" ? "#2196f3" : "#90a4ae",
-            color: "#fff",
-            border: "none",
-            padding: "5px 10px",
-            borderRadius: "4px",
-            cursor: "pointer",
-          }}
-        >
-          {emp.status === "active" ? "Deactivate" : "Activate"}
-        </button>
-      </td>
-    </tr>
-  ))
-)}
-
-         
+            <tr>
+              <td colSpan="5">No employees found</td>
+            </tr>
+          ) : (
+            paginatedEmployees.map((emp) => (
+              <tr key={emp.id}>
+                <td>{emp.id}</td>
+                <td>{emp.name}</td>
+                <td>{emp.doj}</td>
+                <td>{emp.status}</td>
+                <td>
+                  <button
+                    onClick={() => toggleStatus(emp.id, emp.status)}
+                    style={{
+                      backgroundColor:
+                        emp.status === "active" ? "#2196f3" : "#90a4ae",
+                      color: "#fff",
+                      border: "none",
+                      padding: "5px 10px",
+                      borderRadius: "4px",
+                      cursor: "pointer",
+                    }}
+                  >
+                    {emp.status === "active" ? "Deactivate" : "Activate"}
+                  </button>
+                </td>
+              </tr>
+            ))
+          )}
         </tbody>
       </table>
       <div className="pagination">
-  <button
-    onClick={() => handlePageChange(currentPage - 1)}
-    disabled={currentPage === 1}
-  >
-    Prev
-  </button>
-  <span style={{ margin: "0 10px" }}>
-    Page {currentPage} of {totalPages}
-  </span>
-  <button
-    onClick={() => handlePageChange(currentPage + 1)}
-    disabled={currentPage === totalPages}
-  >
-    Next
-  </button>
-</div>
-
+        <button
+          onClick={() => handlePageChange(currentPage - 1)}
+          disabled={currentPage === 1}
+        >
+          Prev
+        </button>
+        <span style={{ margin: "0 10px" }}>
+          Page {currentPage} of {totalPages}
+        </span>
+        <button
+          onClick={() => handlePageChange(currentPage + 1)}
+          disabled={currentPage === totalPages}
+        >
+          Next
+        </button>
+      </div>
     </div>
   );
 }

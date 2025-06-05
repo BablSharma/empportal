@@ -23,9 +23,19 @@ const Leave = sequelize.define("Leave", {
     type: DataTypes.TEXT,
     allowNull: false,
   },
-  total_days:{
-         type: DataTypes.INTEGER,
-         allowNull: false,
+  category: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    validate: {
+      isIn: {
+        args: [["Sick Leave", "Casual Leave", "Paid Leave"]],
+        msg: "Invalid leave category. Allowed: Sick Leave, Casual Leave, Paid Leave",
+      },
+    },
+  },
+  total_days: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
   },
   status: {
     type: DataTypes.ENUM("pending", "approved", "rejected"),
